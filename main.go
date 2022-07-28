@@ -15,7 +15,6 @@ func handleRequests() {
 	}
 	log.Println("Started server at " + PORT + " port")
 
-	http.HandleFunc("/", service.HomePage)
 	http.HandleFunc("/rate/", service.Rate)
 	http.HandleFunc("/subscribe/", service.SubscribeNewEmail)
 	http.HandleFunc("/sendEmails/", service.SendBTCRateMails)

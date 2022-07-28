@@ -40,6 +40,10 @@ func WriteToFile(filename string, content []byte) int {
 
 func ReadFile(filename string) []byte {
 	databyte, err := ioutil.ReadFile(filename)
-	error.CheckForError(err)
+	if os.IsNotExist(err) {
+		CreateEmptyEmailsJSON(filename)
+		databyte, err = ioutil.ReadFile(filename)
+		error.CheckForError(err)
+	}
 	return databyte
 }
