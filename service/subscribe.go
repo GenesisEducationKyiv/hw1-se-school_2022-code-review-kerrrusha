@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/kerrrusha/BTC-API/config"
 	"github.com/kerrrusha/BTC-API/error"
@@ -31,7 +32,7 @@ func indexOfEmail(filename string, email string) int {
 	emails := readEmails(filename)
 
 	for index, element := range emails.Emails {
-		if element == email {
+		if strings.EqualFold(element, email) {
 			return index
 		}
 	}
