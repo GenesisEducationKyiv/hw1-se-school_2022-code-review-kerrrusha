@@ -13,7 +13,7 @@ All code has been split into separate sub-packages as part of a modular approach
 
 Working constants, such as the URL of the service that provides the bitcoin rate, as well as the name of the file that stores signed email addresses, are stored in the "config" package.
 
-The server is running at address 0.0.0.0 (this address worked great when testing the server in Docker), the expected port is 8000, although you can define it yourself by creating an environment variable.
+The server is running at address `0.0.0.0` (this address worked great when testing the server in Docker), the expected port is `8000`, although you can define it yourself by creating an environment variable.
 
 # Logic
 
@@ -25,15 +25,15 @@ The server will try to get the json response from the aforementioned third-party
 
 2. POST **/subscribe**
 
-Here the server will have to work with the .json file that stores the mail. If it is missing, a new file with the "list of mail" structure will be created. The main method responsible for processing this request, using the indexOfEmail(filename, email) method, checks if the specified mail already exists. By the way, this function checks emails regardless of case, because as a rule, the spelling of an email address itself does not depend on it. So, we'll have two options:
-  - indexOfEmail(filename, email) returned a value other than -1 (the index of the first occurrence of the email in the list of emails in the file) - this means that such email already exists. Return 409 code indicating an error and error message.
-  - indexOfEmail(filename, email) returned -1 - using the writeNewEmailToFile(filename, email) method, save the sent mail to a .json file, return 200 success code.
+Here the server will have to work with the .json file that stores the mail. If it is missing, a new file with the "list of mail" structure will be created. The main method responsible for processing this request, using the `indexOfEmail(filename, email)` method, checks if the specified mail already exists. By the way, this function checks emails regardless of case, because as a rule, the spelling of an email address itself does not depend on it. So, we'll have two options:
+  - `indexOfEmail(filename, email)` returned a value other than -1 (the index of the first occurrence of the email in the list of emails in the file) - this means that such email already exists. Return 409 code indicating an error and error message.
+  - `indexOfEmail(filename, email)` returned -1 - using the `writeNewEmailToFile(filename, email)` method, save the sent mail to a .json file, return 200 success code.
 
 3. POST **/sendEmails**
 
-The processing of this request begins with getting the current bitcoin rate using the GetBitcoinPriceUAH() method used in the /rate stage. As we know, when executing a request to get a bitcoin rate, a connection error may occur, so we expect two responses from this method:
+The processing of this request begins with getting the current bitcoin rate using the `GetBitcoinPriceUAH()` method used in the **/rate** stage. As we know, when executing a request to get a bitcoin rate, a connection error may occur, so we expect two responses from this method:
   - error - immediately return 400 error code and error message.
-  - the bitcoin rate - then we read all signed emails from the file using the readEmails(filename) method, and each of the emails is separately sent using the Gmail SMTP server with the received bitcoin rate. As a result of the execution, we send the success code 200.
+  - the bitcoin rate - then we read all signed emails from the file using the `readEmails(filename)` method, and each of the emails is separately sent using the Gmail SMTP server with the received bitcoin rate. As a result of the execution, we send the success code 200.
 
 # Docker
 
