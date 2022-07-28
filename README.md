@@ -1,3 +1,5 @@
+# BTC-API Description
+
 This is an API service written in Golang. The service provides the ability to receive the current bitcoin rate in hryvnia equivalent, sign new mails to receive up-to-date information about the bitcoin rate, as well as the ability to send each signed mail a letter with the current bitcoin rate.
 
 To implement the function of obtaining the current bitcoin rate, the service "coinapi.io" was chosen. This service provides free access to cryptocurrency rates, which includes a limit of 100 daily requests. The main packages in developing this feature are "net/http" and "encoding/json".
