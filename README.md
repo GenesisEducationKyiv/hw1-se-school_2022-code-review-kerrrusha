@@ -55,6 +55,8 @@ Via Docker:
 
 In your CLI:
 
-`curl -H "Content-Type: application/json" -X GET http://localhost:8000/rate/`
-`curl -H "Content-Type: application/json" -X POST http://localhost:8000/subscribe/ -d "{\"email\":\"example@gmail.com\"}"`
-`curl -H "Content-Type: application/json" -X POST http://localhost:8000/sendEmails/`
+```
+curl -H "Content-Type: application/json" -X GET http://localhost:8000/rate/
+curl -H "Content-Type: application/json" -X POST http://localhost:8000/subscribe/ -d "{\"email\":\"example@gmail.com\"}"
+curl -H "Content-Type: application/json" -X POST http://localhost:8000/sendEmails/
+```
