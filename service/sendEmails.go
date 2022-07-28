@@ -39,14 +39,14 @@ func sendEmails(to []string, subject string, body string) {
 }
 
 func SendBTCRateMails(w http.ResponseWriter, r *http.Request) {
-	emails := readEmails(config.FILENAME)
-
 	result, errorMsg := GetBitcoinPriceUAH()
 
 	if len(errorMsg) > 0 {
 		response.SendErrorResponse(w, errorMsg, http.StatusBadRequest)
 		return
 	}
+
+	emails := readEmails(config.FILENAME)
 
 	subject := "BTC/UAH"
 	body := fmt.Sprintf("%d", result)
