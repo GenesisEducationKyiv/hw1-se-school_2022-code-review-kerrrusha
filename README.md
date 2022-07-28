@@ -1,11 +1,11 @@
 # BTC-API
 
-This is an API service written in Golang. The service provides the ability to receive the current bitcoin rate in hryvnia equivalent, sign new mails to receive up-to-date information about the bitcoin rate, as well as the ability to send each signed mail a letter with the current bitcoin rate.
+This is an API service written in Golang. The service provides the ability to receive the current bitcoin rate in UAH equivalent, subscribe new emails to receive up-to-date information about the bitcoin rate, as well as the ability to send each signed email a letter with the current bitcoin rate.
 
 To implement the function of obtaining the current bitcoin rate, the service "coinapi.io" was chosen. This service provides free access to cryptocurrency rates, which includes a limit of 100 daily requests. The main packages in developing this feature are "net/http" and "encoding/json".
 
-Signed mail data is stored locally in a ".json" file. A SMTP Google account was created to send letters.
-The built-in package "net/smtp" was used.
+Signed mail data is stored locally in a ".json" file. A SMTP Google Mail was chosen as mailing server.
+The built-in package "net/smtp" was used to send out letters.
 
 The whole solution was implemented using only the packages built into the Golang language, so that at the stage of preparation for dockerizing the solution there was no need to create a go.sum file, which is designed to verify the hash sums of downloaded third-party packages.
 
@@ -25,12 +25,12 @@ The server will try to get the json response from the aforementioned third-party
 
 2. POST **/subscribe**
 
-Here the server will have to work with the .json file that stores the mail. If it is missing, a new file with the "list of mail" structure will be created. The main method responsible for processing this request, using the indexOfEmail(filename, email) method, checks if the specified mail already exists. By the way, this function checks emails regardless of case, because as a rule, the spelling of an email address itself does not depend on it. So, we have two options for the development of events:
-  - indexOfEmail(filename, e-mail) returned a value other than -1 (the index of the first occurrence of the mail in the list of mails in the file) - this means that such mail already exists. return 409 code indicating an error.
+Here the server will have to work with the .json file that stores the mail. If it is missing, a new file with the "list of mail" structure will be created. The main method responsible for processing this request, using the indexOfEmail(filename, email) method, checks if the specified mail already exists. By the way, this function checks emails regardless of case, because as a rule, the spelling of an email address itself does not depend on it. So, we'll have two options:
+  - indexOfEmail(filename, email) returned a value other than -1 (the index of the first occurrence of the email in the list of emails in the file) - this means that such email already exists. Return 409 code indicating an error.
   - indexOfEmail(filename, email) returned -1 - using the writeNewEmailToFile(filename, email) method, save the sent mail to a .json file, return 200 success code.
 
 3. POST **/sendEmails**
 
 The processing of this request begins with getting the current bitcoin rate using the GetBitcoinPriceUAH() method used in the /rate stage. As we know, when executing a request to get a bitcoin rate, a connection error may occur, so we expect two responses from this method:
   - error - immediately return 400 error code
-  - the bitcoin rate - then we read all signed mails from the file using the readEmails(filename) method, and each of the mails is separately sent using the Gmail SMTP server with the received bitcoin rate. As a result of the execution, we send the success code 200.
+  - the bitcoin rate - then we read all signed emails from the file using the readEmails(filename) method, and each of the emails is separately sent using the Gmail SMTP server with the received bitcoin rate. As a result of the execution, we send the success code 200.
