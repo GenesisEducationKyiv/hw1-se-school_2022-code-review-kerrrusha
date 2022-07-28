@@ -17,7 +17,7 @@ The server is running at address `0.0.0.0` (this address worked great when testi
 
 # Logic
 
-1. GET `**/rate**`
+1. GET **`/rate`**
 
 The server will try to get the json response from the aforementioned third-party API that provides the bitcoin rate. Since we can expect an error from the server (for example, the connection key is incorrect/outdated), we process two options:
   - received an error message - return 400 code and error message
