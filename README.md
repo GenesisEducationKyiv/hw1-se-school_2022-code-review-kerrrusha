@@ -1,4 +1,4 @@
-# BTC-API Description
+# BTC-API
 
 This is an API service written in Golang. The service provides the ability to receive the current bitcoin rate in hryvnia equivalent, sign new mails to receive up-to-date information about the bitcoin rate, as well as the ability to send each signed mail a letter with the current bitcoin rate.
 
@@ -17,17 +17,20 @@ The server is running at address 0.0.0.0 (this address worked great when testing
 
 # Logic
 
-1. GET /rate
+1. GET **/rate**
+
 The server will try to get the json response from the aforementioned third-party API that provides the bitcoin rate. Since we can expect an error from the server (for example, the connection key is incorrect/outdated), we process two options:
   - received an error message - return 400 code and error text
   - received a response containing information about the bitcoin rate - turn the actual value of the bitcoin rate into an integer, and return the response 200 with the received value.
 
-2. POST/subscribe
+2. POST **/subscribe**
+
 Here the server will have to work with the .json file that stores the mail. If it is missing, a new file with the "list of mail" structure will be created. The main method responsible for processing this request, using the indexOfEmail(filename, email) method, checks if the specified mail already exists. By the way, this function checks emails regardless of case, because as a rule, the spelling of an email address itself does not depend on it. So, we have two options for the development of events:
   - indexOfEmail(filename, e-mail) returned a value other than -1 (the index of the first occurrence of the mail in the list of mails in the file) - this means that such mail already exists. return 409 code indicating an error.
   - indexOfEmail(filename, email) returned -1 - using the writeNewEmailToFile(filename, email) method, save the sent mail to a .json file, return 200 success code.
 
-3. POST /send email
+3. POST **/sendEmails**
+
 The processing of this request begins with getting the current bitcoin rate using the GetBitcoinPriceUAH() method used in the /rate stage. As we know, when executing a request to get a bitcoin rate, a connection error may occur, so we expect two responses from this method:
   - error - immediately return 400 error code
   - the bitcoin rate - then we read all signed mails from the file using the readEmails(filename) method, and each of the mails is separately sent using the Gmail SMTP server with the received bitcoin rate. As a result of the execution, we send the success code 200.
