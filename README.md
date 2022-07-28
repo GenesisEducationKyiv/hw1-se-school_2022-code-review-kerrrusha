@@ -39,22 +39,22 @@ The processing of this request begins with getting the current bitcoin rate usin
 
 The server has the ability to be containerized thanks to the Dockerfile. To build an image:
 
-docker build -t btc-api .
+`docker build -t btc-api .`
 
 # Run
 
 Via CLI:
 
-go run main.go
+`go run main.go`
 
 Via Docker:
 
-docker run -p 8000:8000 btc-api
+`docker run -p 8000:8000 btc-api`
 
 # Use
 
 In your CLI:
 
-curl -H "Content-Type: application/json" -X GET http://localhost:8000/rate/
-curl -H "Content-Type: application/json" -X POST http://localhost:8000/subscribe/ -d "{\"email\":\"example@gmail.com\"}"
-curl -H "Content-Type: application/json" -X POST http://localhost:8000/sendEmails/
+`curl -H "Content-Type: application/json" -X GET http://localhost:8000/rate/`
+`curl -H "Content-Type: application/json" -X POST http://localhost:8000/subscribe/ -d "{\"email\":\"example@gmail.com\"}"`
+`curl -H "Content-Type: application/json" -X POST http://localhost:8000/sendEmails/`
