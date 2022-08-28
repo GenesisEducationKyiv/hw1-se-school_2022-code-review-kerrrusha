@@ -66,5 +66,6 @@ func Rate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(rateUAH)
+	err := json.NewEncoder(w).Encode(rateUAH)
+	error.CheckForError(err)
 }
