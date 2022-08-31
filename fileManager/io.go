@@ -2,6 +2,7 @@ package fileManager
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -40,10 +41,16 @@ func WriteToFile(filename string, content []byte) int {
 
 func ReadFile(filename string) []byte {
 	databyte, err := ioutil.ReadFile(filename)
-	if os.IsNotExist(err) {
-		CreateEmptyEmailsJSON(filename)
-		databyte, err = ioutil.ReadFile(filename)
-		error.CheckForError(err)
-	}
+	error.CheckForError(err)
 	return databyte
+}
+
+func FileNotExist(filename string) bool {
+	_, err := os.Stat(filename)
+	return errors.Is(err, os.ErrNotExist)
+}
+
+func FileIsEmpty(filename string) bool {
+	fileBytes := ReadFile(filename)
+	return len(fileBytes) <= 0
 }
