@@ -16,13 +16,12 @@ import (
 
 func readEmails(filename string) model.Emails {
 	var emails model.Emails
-	fileBytes := fileManager.ReadFile(filename)
 
-	if len(fileBytes) <= 0 {
+	if fileManager.FileNotExist(filename) || fileManager.FileIsEmpty(filename) {
 		fileManager.CreateEmptyEmailsJSON(filename)
-		fileBytes = fileManager.ReadFile(filename)
 	}
 
+	fileBytes := fileManager.ReadFile(filename)
 	err := json.Unmarshal(fileBytes, &emails)
 	error.CheckForError(err)
 
