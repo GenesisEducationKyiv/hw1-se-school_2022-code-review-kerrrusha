@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/mail"
 	"strings"
 
 	"github.com/kerrrusha/BTC-API/config"
@@ -15,13 +16,12 @@ import (
 
 func readEmails(filename string) model.Emails {
 	var emails model.Emails
-	fileBytes := fileManager.ReadFile(filename)
 
-	if len(fileBytes) <= 0 {
+	if fileManager.FileNotExist(filename) || fileManager.FileIsEmpty(filename) {
 		fileManager.CreateEmptyEmailsJSON(filename)
-		fileBytes = fileManager.ReadFile(filename)
 	}
 
+	fileBytes := fileManager.ReadFile(filename)
 	err := json.Unmarshal(fileBytes, &emails)
 	error.CheckForError(err)
 
@@ -38,6 +38,11 @@ func indexOfEmail(filename string, email string) int {
 	}
 
 	return -1
+}
+
+func emailIsValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
 
 func writeNewEmailToFile(filename string, email string) {
@@ -67,6 +72,10 @@ func SubscribeNewEmail(w http.ResponseWriter, r *http.Request) {
 
 	if indexOfEmail(config.FILENAME, newEmail.Email) != -1 {
 		response.SendErrorResponse(w, "Email was not subscribed: it already exists", http.StatusConflict)
+		return
+	}
+	if !emailIsValid(newEmail.Email) {
+		response.SendErrorResponse(w, "Email is not correct. Please, enter valid email", http.StatusConflict)
 		return
 	}
 
