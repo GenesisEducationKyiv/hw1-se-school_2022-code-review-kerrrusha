@@ -4,12 +4,15 @@ import (
 	"testing"
 
 	"github.com/kerrrusha/BTC-API/service"
+	"github.com/stretchr/testify/assert"
 )
 
 type SearchTestPair struct {
 	query    string
 	expected int
 }
+
+const indexErrorMsg = "Index is not correct."
 
 // TestSearchNormal calls service.StringArraySearch
 // with an NORMAL array and string query, checking
@@ -29,9 +32,7 @@ func TestSearchNormal(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		if elem.expected != actual {
-			t.Errorf(`Index was incorrect, actual: %d, expected: %d.`, actual, elem.expected)
-		}
+		assert.Equal(t, actual, elem.expected, indexErrorMsg)
 	}
 }
 
@@ -47,9 +48,7 @@ func TestSearchEmpty(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		if elem.expected != actual {
-			t.Errorf(`Index was incorrect, actual: %d, expected: %d.`, actual, elem.expected)
-		}
+		assert.Equal(t, actual, elem.expected, indexErrorMsg)
 	}
 }
 
@@ -71,9 +70,7 @@ func TestSearchNotFound(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		if elem.expected != actual {
-			t.Errorf(`Index was incorrect, actual: %d, expected: %d.`, actual, elem.expected)
-		}
+		assert.Equal(t, actual, elem.expected, indexErrorMsg)
 	}
 }
 
@@ -88,8 +85,6 @@ func TestSearchNilArray(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(nil, elem.query)
-		if elem.expected != actual {
-			t.Errorf(`Index was incorrect, actual: %d, expected: %d.`, actual, elem.expected)
-		}
+		assert.Equal(t, actual, elem.expected, indexErrorMsg)
 	}
 }
