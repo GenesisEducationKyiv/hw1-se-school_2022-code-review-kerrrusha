@@ -28,16 +28,20 @@ func readEmails(filename string) model.Emails {
 	return emails
 }
 
-func indexOfEmail(filename string, email string) int {
-	emails := readEmails(filename)
-
-	for index, element := range emails.Emails {
-		if strings.EqualFold(element, email) {
+func StringArraySearch(array []string, query string) int {
+	for index, element := range array {
+		if strings.EqualFold(element, query) {
 			return index
 		}
 	}
 
 	return -1
+}
+
+func indexOfEmail(filename string, email string) int {
+	emails := readEmails(filename)
+
+	return StringArraySearch(emails.Emails, email)
 }
 
 func emailIsValid(email string) bool {
