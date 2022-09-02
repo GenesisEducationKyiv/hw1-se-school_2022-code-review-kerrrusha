@@ -14,7 +14,7 @@ import (
 	"github.com/kerrrusha/BTC-API/response"
 )
 
-func readEmails(filename string) model.Emails {
+func ReadEmails(filename string) model.Emails {
 	var emails model.Emails
 
 	if fileManager.FileNotExist(filename) || fileManager.FileIsEmpty(filename) {
@@ -39,12 +39,12 @@ func StringArraySearch(array []string, query string) int {
 }
 
 func indexOfEmail(filename string, email string) int {
-	emails := readEmails(filename)
+	emails := ReadEmails(filename)
 
 	return StringArraySearch(emails.Emails, email)
 }
 
-func emailIsValid(email string) bool {
+func EmailIsValid(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
 }
@@ -78,7 +78,7 @@ func SubscribeNewEmail(w http.ResponseWriter, r *http.Request) {
 		response.SendErrorResponse(w, "Email was not subscribed: it already exists", http.StatusConflict)
 		return
 	}
-	if !emailIsValid(newEmail.Email) {
+	if !EmailIsValid(newEmail.Email) {
 		response.SendErrorResponse(w, "Email is not correct. Please, enter valid email", http.StatusConflict)
 		return
 	}
