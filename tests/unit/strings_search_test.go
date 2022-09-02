@@ -14,9 +14,6 @@ type SearchTestPair struct {
 
 const indexErrorMsg = "Index is not correct."
 
-// TestSearchNormal calls service.StringArraySearch
-// with an NORMAL array and string query, checking
-// for a valid return value.
 func TestSearchNormal(t *testing.T) {
 	array := []string{
 		"kirill",
@@ -36,9 +33,6 @@ func TestSearchNormal(t *testing.T) {
 	}
 }
 
-// TestSearchNormal calls service.StringArraySearch
-// with an EMPTY array and string query, checking
-// for a valid return value.
 func TestSearchEmpty(t *testing.T) {
 	array := []string{}
 	testPairs := []SearchTestPair{
@@ -52,9 +46,6 @@ func TestSearchEmpty(t *testing.T) {
 	}
 }
 
-// TestSearchNormal calls service.StringArraySearch
-// with an NORMAL array and string query thats have to be not founded,
-// checking for a valid return value.
 func TestSearchNotFound(t *testing.T) {
 	array := []string{
 		"kirill",
@@ -74,9 +65,6 @@ func TestSearchNotFound(t *testing.T) {
 	}
 }
 
-// TestSearchNormal calls service.StringArraySearch
-// with an NIL array and string query, checking
-// for a valid return value.
 func TestSearchNilArray(t *testing.T) {
 	testPairs := []SearchTestPair{
 		{"johnson", -1},
