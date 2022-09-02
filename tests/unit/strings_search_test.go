@@ -29,7 +29,7 @@ func TestSearchNormal(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		assert.Equal(t, actual, elem.expected, indexErrorMsg)
+		assert.Equal(t, elem.expected, actual, indexErrorMsg)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestSearchEmpty(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		assert.Equal(t, actual, elem.expected, indexErrorMsg)
+		assert.Equal(t, elem.expected, actual, indexErrorMsg)
 	}
 }
 
@@ -61,7 +61,7 @@ func TestSearchNotFound(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(array, elem.query)
-		assert.Equal(t, actual, elem.expected, indexErrorMsg)
+		assert.Equal(t, elem.expected, actual, indexErrorMsg)
 	}
 }
 
@@ -73,6 +73,6 @@ func TestSearchNilArray(t *testing.T) {
 	}
 	for _, elem := range testPairs {
 		actual := service.StringArraySearch(nil, elem.query)
-		assert.Equal(t, actual, elem.expected, indexErrorMsg)
+		assert.Equal(t, elem.expected, actual, indexErrorMsg)
 	}
 }
