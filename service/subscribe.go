@@ -14,7 +14,7 @@ import (
 	"github.com/kerrrusha/BTC-API/response"
 )
 
-func readEmails(filename string) model.Emails {
+func ReadEmails(filename string) model.Emails {
 	var emails model.Emails
 
 	if fileManager.FileNotExist(filename) || fileManager.FileIsEmpty(filename) {
@@ -28,11 +28,9 @@ func readEmails(filename string) model.Emails {
 	return emails
 }
 
-func indexOfEmail(filename string, email string) int {
-	emails := readEmails(filename)
-
-	for index, element := range emails.Emails {
-		if strings.EqualFold(element, email) {
+func StringArraySearch(array []string, query string) int {
+	for index, element := range array {
+		if strings.EqualFold(element, query) {
 			return index
 		}
 	}
@@ -40,12 +38,18 @@ func indexOfEmail(filename string, email string) int {
 	return -1
 }
 
-func emailIsValid(email string) bool {
+func indexOfEmail(filename string, email string) int {
+	emails := ReadEmails(filename)
+
+	return StringArraySearch(emails.Emails, email)
+}
+
+func EmailIsValid(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
 }
 
-func writeNewEmailToFile(filename string, email string) {
+func WriteNewEmailToFile(filename string, email string) {
 	var emails model.Emails
 	fileBytes := fileManager.ReadFile(filename)
 
@@ -74,12 +78,12 @@ func SubscribeNewEmail(w http.ResponseWriter, r *http.Request) {
 		response.SendErrorResponse(w, "Email was not subscribed: it already exists", http.StatusConflict)
 		return
 	}
-	if !emailIsValid(newEmail.Email) {
+	if !EmailIsValid(newEmail.Email) {
 		response.SendErrorResponse(w, "Email is not correct. Please, enter valid email", http.StatusConflict)
 		return
 	}
 
-	writeNewEmailToFile(config.FILENAME, newEmail.Email)
+	WriteNewEmailToFile(config.FILENAME, newEmail.Email)
 
 	response.SendSuccessResponse(w, "Email was subscribed successfully", http.StatusOK)
 }

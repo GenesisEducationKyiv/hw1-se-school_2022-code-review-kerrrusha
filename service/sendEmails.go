@@ -11,7 +11,7 @@ import (
 	"github.com/kerrrusha/BTC-API/response"
 )
 
-func sendEmails(to []string, subject string, body string) {
+func SendEmails(to []string, subject string, body string) {
 	const (
 		FROM     = "smtp8317@gmail.com"
 		USERNAME = "smtp8317@gmail.com"
@@ -46,13 +46,13 @@ func SendBTCRateMails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emails := readEmails(config.FILENAME)
+	emails := ReadEmails(config.FILENAME)
 
 	subject := "BTC/UAH"
 	body := fmt.Sprintf("%d", result)
 
 	for _, element := range emails.Emails {
-		sendEmails([]string{element}, subject, body)
+		SendEmails([]string{element}, subject, body)
 	}
 
 	response.SendSuccessResponse(w, "Emails was sent successfully!", http.StatusOK)

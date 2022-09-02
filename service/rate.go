@@ -13,7 +13,7 @@ import (
 	"github.com/kerrrusha/BTC-API/response"
 )
 
-func getJson(url string) []byte {
+func GetJson(url string) []byte {
 	client := http.Client{Timeout: time.Second * 2}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -33,7 +33,7 @@ func getJson(url string) []byte {
 }
 
 func GetBitcoinPriceUAH() (int, string) {
-	jsonAnswer := getJson(config.URL_GET_BTC)
+	jsonAnswer := GetJson(config.URL_GET_BTC)
 
 	var rateAnswer model.RateAnswer
 	err := json.Unmarshal(jsonAnswer, &rateAnswer)
