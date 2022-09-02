@@ -49,7 +49,7 @@ func emailIsValid(email string) bool {
 	return err == nil
 }
 
-func writeNewEmailToFile(filename string, email string) {
+func WriteNewEmailToFile(filename string, email string) {
 	var emails model.Emails
 	fileBytes := fileManager.ReadFile(filename)
 
@@ -83,7 +83,7 @@ func SubscribeNewEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeNewEmailToFile(config.FILENAME, newEmail.Email)
+	WriteNewEmailToFile(config.FILENAME, newEmail.Email)
 
 	response.SendSuccessResponse(w, "Email was subscribed successfully", http.StatusOK)
 }
