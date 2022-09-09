@@ -1,9 +1,8 @@
-package tests
+package e2e
 
 import (
 	"testing"
 
-	"github.com/kerrrusha/BTC-API/service"
 	"github.com/stretchr/testify/assert"
 )
 

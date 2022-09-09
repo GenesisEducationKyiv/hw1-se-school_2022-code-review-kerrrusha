@@ -1,14 +1,17 @@
-package tests
+package e2e
 
 import (
 	"testing"
 
-	"github.com/kerrrusha/BTC-API/service"
-	"github.com/stretchr/testify/assert"
+	"github.com/kerrrusha/BTC-API/api/internal/config"
+	"github.com/kerrrusha/BTC-API/api/internal/service"
 )
 
 const getBtcErrorMsg = "Exception was thrown"
 
-func TestGetBtcError(t *testing.T) {
-	assert.NotPanics(t, func() { service.GetBitcoinPriceUAH() })
+func TestGetRateError(t *testing.T) {
+	cfg := config.Get()
+	repo := service.GetRepository(cfg.CoinApiUrl)
+
+	rate, err := repo.GetCurrencyRate(cfg.BaseCurrency, cfg.QuoteCurrency)
 }
