@@ -15,10 +15,14 @@ import (
 func Rate(w http.ResponseWriter, r *http.Request) {
 	log.Println("rate endpoint")
 
-	cfg := config.Get()
-	repo := service.GetRepository(cfg.CoinApiUrl)
+	provider, requestFailure := service.GetCurrencyRepository().GetCurrencyProvider()
+	if requestFailure != nil {
+		responseUtils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
+		return
+	}
 
-	rate, err := repo.GetCurrencyRate(cfg.BaseCurrency, cfg.QuoteCurrency)
+	cfg := config.Get()
+	rate, err := provider.GetCurrencyRate(cfg.BaseCurrency, cfg.QuoteCurrency)
 
 	if err != nil {
 		responseUtils.SendResponse(w, model.ErrorResponse{Error: err.GetMessage()}, http.StatusBadRequest)
