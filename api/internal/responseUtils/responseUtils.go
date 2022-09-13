@@ -7,7 +7,7 @@ import (
 	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
 )
 
-func SendResponse(w http.ResponseWriter, response any, code int) {
+func SendResponse(w http.ResponseWriter, response interface{}, code int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	err := json.NewEncoder(w).Encode(response)

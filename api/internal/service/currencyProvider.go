@@ -3,64 +3,41 @@ package service
 import (
 	"encoding/json"
 	"strings"
-	"sync"
 
 	"github.com/kerrrusha/BTC-API/api/internal/config"
 	"github.com/kerrrusha/BTC-API/api/internal/model"
 	"github.com/kerrrusha/BTC-API/api/internal/requestUtils"
 )
 
-type repository struct {
+type currencyProvider struct {
 	baseUrl string
 }
 
-var lock = &sync.Mutex{}
-
-var repo *repository
-
-func GetRepository(repoUrl string) *repository {
-	if repo != nil {
-		return repo
-	}
-
-	TryInitRepositorySingleton(repoUrl)
-
-	return repo
-}
-
-func TryInitRepositorySingleton(repoUrl string) {
-	lock.Lock()
-	defer lock.Unlock()
-	if repo == nil {
-		repo = createRepository(repoUrl)
+func CreateCurrencyProvider(providerUrl string) *currencyProvider {
+	return &currencyProvider{
+		baseUrl: providerUrl,
 	}
 }
 
-func createRepository(repoUrl string) *repository {
-	return &repository{
-		baseUrl: repoUrl,
-	}
-}
-
-func (repo *repository) GetCurrencyRate(baseCurrenct string, quoteCurrency string) (int, *model.RequestFailureError) {
-	requestUrl := repo.configureUrl()
+func (provider *currencyProvider) GetCurrencyRate(baseCurrency string, quoteCurrency string) (int, *model.RequestFailureError) {
+	requestUrl := provider.configureUrl(baseCurrency, quoteCurrency)
 	jsonResponse := requestUtils.RequestJson(requestUrl)
-	rate, err := repo.castResponse(jsonResponse)
+	rate, err := provider.castResponse(jsonResponse)
 
 	return int(rate), err
 }
 
-func (repo *repository) configureUrl() string {
+func (provider *currencyProvider) configureUrl(baseCurrency string, quoteCurrency string) string {
+	result := provider.baseUrl
 	cfg := config.Get()
-	result := repo.baseUrl
 
-	result = strings.ReplaceAll(result, cfg.BaseCurrencyMark, cfg.BaseCurrency)
-	result = strings.ReplaceAll(result, cfg.QuoteCurrencyMark, cfg.QuoteCurrency)
+	result = strings.ReplaceAll(result, cfg.BaseCurrencyMark, baseCurrency)
+	result = strings.ReplaceAll(result, cfg.QuoteCurrencyMark, quoteCurrency)
 
 	return result
 }
 
-func (repo *repository) castResponse(jsonBytes []byte) (float64, *model.RequestFailureError) {
+func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *model.RequestFailureError) {
 	const INVALID_RETURN_VALUE = -1
 	const CAST_ERROR_MESSAGE = "Unsuccessful to unmarshal json Response"
 	const THIRD_PARTY_ERROR_MESSAGE = "Third-party side API caused error"
