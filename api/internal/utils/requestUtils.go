@@ -1,28 +1,29 @@
-package requestUtils
+package utils
 
 import (
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
 )
 
 func RequestJson(url string) []byte {
 	client := http.Client{Timeout: time.Second * 2}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
-	errorUtils.CheckForError(err)
+	CheckForError(err)
 
 	res, err := client.Do(req)
-	errorUtils.CheckForError(err)
+	CheckForError(err)
 
 	if res.Body != nil {
-		defer res.Body.Close()
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			CheckForError(err)
+		}(res.Body)
 	}
 
 	body, readErr := io.ReadAll(res.Body)
-	errorUtils.CheckForError(readErr)
+	CheckForError(readErr)
 
 	return body
 }

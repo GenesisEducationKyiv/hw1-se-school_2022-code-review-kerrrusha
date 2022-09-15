@@ -1,4 +1,4 @@
-package model
+package errors
 
 type CurrencyProviderChainAreOverError struct {
 	*CustomError

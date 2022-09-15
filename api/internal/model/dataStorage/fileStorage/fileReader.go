@@ -3,8 +3,7 @@ package fileStorage
 import (
 	"os"
 
-	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/model/dataStorage"
+	"github.com/kerrrusha/btc-api/api/internal/model/dataStorage"
 )
 
 type fileReader struct {
@@ -15,15 +14,22 @@ func (reader *fileReader) Read() []byte {
 	file := reader.AccessFileRead()
 
 	databyte, err := os.ReadFile(reader.Path)
-	errorUtils.CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
 
 	return databyte
 }
 
 func CreateFileReader(filepath string) *fileReader {
 	return &fileReader{
-		FileAccessable: &dataStorage.FileAccessable{Path: GetProjPath() + filepath},
+		FileAccessable: &dataStorage.FileAccessable{Path: filepath},
 	}
 }

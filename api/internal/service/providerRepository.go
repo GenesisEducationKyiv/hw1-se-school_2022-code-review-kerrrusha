@@ -4,9 +4,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/kerrrusha/BTC-API/api/internal/config"
-	"github.com/kerrrusha/BTC-API/api/internal/model"
-	"github.com/kerrrusha/BTC-API/api/internal/service/currencyResponse"
+	"github.com/kerrrusha/btc-api/api/internal/config"
+	"github.com/kerrrusha/btc-api/api/internal/errors"
 )
 
 type providerRepository struct {
@@ -48,28 +47,28 @@ func createProviderRepository() {
 	repo = &providerRepository{}
 }
 func initialiseProviderRepository() {
-	cfg := config.Get()
+	cfg := config.GetConfig()
 
-	coinapiProvider := CreateCurrencyProvider(cfg.CoinApiUrl, &currencyResponse.CoinapiResponse{})
+	coinapiProvider := CreateCurrencyProvider(cfg.GetCoinapiUrl(), cfg.GetCoinapiRateKey())
 	coinapiChain := CreateCurrencyProviderChain(coinapiProvider)
 
-	binanceProvider := CreateCurrencyProvider(cfg.BinanceApiUrl, &currencyResponse.BinanceResponse{})
+	binanceProvider := CreateCurrencyProvider(cfg.GetBinanceUrl(), cfg.GetBinanceRateKey())
 	binanceChain := CreateCurrencyProviderChain(binanceProvider)
 
 	mainProviderName := getMainCurrencyProviderName()
-	if mainProviderName == config.BINANCE {
+	if mainProviderName == cfg.GetEnvironmentVarBinanceProviderName() {
 		repo.addCurrencyProviderChain(binanceChain)
 		repo.addCurrencyProviderChain(coinapiChain)
 	}
-	if mainProviderName == config.COINAPI {
+	if mainProviderName == cfg.GetEnvironmentVarCoinapiProviderName() {
 		repo.addCurrencyProviderChain(coinapiChain)
 		repo.addCurrencyProviderChain(binanceChain)
 	}
 }
 
-func (c *providerRepository) GetCurrencyProvider() (*currencyProvider, *model.CurrencyProviderChainAreOverError) {
+func (c *providerRepository) GetCurrencyProvider() (*currencyProvider, *errors.CurrencyProviderChainAreOverError) {
 	if c.current.IsEmpty() {
-		return nil, model.CreateCurrencyProviderChainAreOverError("Current provider chain is empty.")
+		return nil, errors.CreateCurrencyProviderChainAreOverError("Current provider chain is empty.")
 	}
 	return c.current.GetCurrencyProvider(), nil
 }

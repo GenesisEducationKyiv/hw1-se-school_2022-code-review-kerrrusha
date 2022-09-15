@@ -1,3 +1,3 @@
-module github.com/kerrrusha/BTC-API
+module github.com/kerrrusha/btc-api
 
 go 1.19

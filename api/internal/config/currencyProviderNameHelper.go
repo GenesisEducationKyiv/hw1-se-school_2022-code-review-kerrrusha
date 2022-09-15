@@ -1,18 +1,13 @@
 package config
 
-const (
-	BINANCE = "BINANCE"
-	COINAPI = "COINAPI"
-)
-
 func GetCurrencyProviderNameArray() []string {
 	return []string{
-		BINANCE,
-		COINAPI,
+		cfg.GetEnvironmentVarBinanceProviderName(),
+		cfg.GetEnvironmentVarCoinapiProviderName(),
 	}
 }
 func GetDefaultCurrencyProviderName() string {
-	return BINANCE
+	return cfg.GetEnvironmentVarBinanceProviderName()
 }
 func CurrencyProviderNameExists(name string) bool {
 	names := GetCurrencyProviderNameArray()

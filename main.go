@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/kerrrusha/BTC-API/api/rest"
+	"github.com/kerrrusha/btc-api/api/rest"
 )
 
 func getPort() string {

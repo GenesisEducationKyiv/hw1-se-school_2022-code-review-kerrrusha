@@ -5,18 +5,16 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/kerrrusha/BTC-API/api/internal/arrayUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/config"
-	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/model"
-	"github.com/kerrrusha/BTC-API/api/internal/model/dataStorage/fileStorage"
-	"github.com/kerrrusha/BTC-API/api/internal/responseUtils"
+	"github.com/kerrrusha/btc-api/api/internal/config"
+	"github.com/kerrrusha/btc-api/api/internal/model"
+	"github.com/kerrrusha/btc-api/api/internal/model/dataStorage/fileStorage"
+	"github.com/kerrrusha/btc-api/api/internal/utils"
 )
 
 func CreateEmptyEmailsJSON(filepath string) {
 	emails := model.Emails{Emails: []string{}}
 	emailsJSON, err := json.Marshal(emails)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
 	writer := fileStorage.CreateFileWriter(filepath)
 	writer.Write(string(emailsJSON), false)
@@ -25,14 +23,14 @@ func CreateEmptyEmailsJSON(filepath string) {
 func ReadEmails(filepath string) model.Emails {
 	var emails model.Emails
 
-	if fileStorage.FileNotExist(filepath) || fileStorage.FileIsEmpty(filepath) {
+	if utils.FileNotExist(filepath) || utils.FileIsEmpty(filepath) {
 		CreateEmptyEmailsJSON(filepath)
 	}
 
 	reader := fileStorage.CreateFileReader(filepath)
 	fileBytes := reader.Read()
 	err := json.Unmarshal(fileBytes, &emails)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
 	return emails
 }
@@ -44,12 +42,12 @@ func WriteNewEmailToFile(filepath string, email string) {
 	fileBytes := storage.Read()
 
 	err := json.Unmarshal(fileBytes, &emails)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
 	emails.Emails = append(emails.Emails, email)
 
 	emailsJSON, err := json.Marshal(emails)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
 	storage.Write(string(emailsJSON), true)
 }
@@ -58,14 +56,14 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	log.Println("subscribe endpoint")
 
 	decoder := json.NewDecoder(r.Body)
-	cfg := config.Get()
+	cfg := config.GetConfig()
 
 	var newEmail model.Email
 	err := decoder.Decode(&newEmail)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
-	if arrayUtils.StringArraySearch(ReadEmails(cfg.Filepath).Emails, newEmail.Email) != -1 {
-		responseUtils.SendResponse(
+	if utils.StringArraySearch(ReadEmails(cfg.GetEmailsFilepath()).Emails, newEmail.Email) != -1 {
+		utils.SendResponse(
 			w,
 			model.ErrorResponse{Error: "Email was not subscribed: it already exists"},
 			http.StatusConflict,
@@ -73,7 +71,7 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !newEmail.IsValid() {
-		responseUtils.SendResponse(
+		utils.SendResponse(
 			w,
 			model.ErrorResponse{Error: "Email is not correct. Please, enter valid email"},
 			http.StatusConflict,
@@ -81,9 +79,9 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	WriteNewEmailToFile(cfg.Filepath, newEmail.Email)
+	WriteNewEmailToFile(cfg.GetEmailsFilepath(), newEmail.Email)
 
-	responseUtils.SendResponse(
+	utils.SendResponse(
 		w,
 		model.SuccessResponse{Success: "Email was subscribed successfully"},
 		http.StatusOK,

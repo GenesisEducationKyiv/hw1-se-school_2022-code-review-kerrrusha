@@ -2,9 +2,9 @@ package fileStorage
 
 import (
 	"io"
+	"os"
 
-	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/model/dataStorage"
+	"github.com/kerrrusha/btc-api/api/internal/model/dataStorage"
 )
 
 type fileWriter struct {
@@ -15,15 +15,22 @@ func (writer *fileWriter) Write(content string, append bool) int {
 	file := writer.AccessFileWrite()
 
 	length, err := io.WriteString(file, content)
-	errorUtils.CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
 
 	return length
 }
 
 func CreateFileWriter(filepath string) *fileWriter {
 	return &fileWriter{
-		FileAccessable: &dataStorage.FileAccessable{Path: GetProjPath() + filepath},
+		FileAccessable: &dataStorage.FileAccessable{Path: filepath},
 	}
 }

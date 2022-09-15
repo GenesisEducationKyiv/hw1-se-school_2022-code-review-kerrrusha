@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"net/smtp"
 
-	"github.com/kerrrusha/BTC-API/api/internal/config"
-	"github.com/kerrrusha/BTC-API/api/internal/errorUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/model"
-	"github.com/kerrrusha/BTC-API/api/internal/responseUtils"
-	"github.com/kerrrusha/BTC-API/api/internal/service"
+	"github.com/kerrrusha/btc-api/api/internal/config"
+	"github.com/kerrrusha/btc-api/api/internal/model"
+	"github.com/kerrrusha/btc-api/api/internal/service"
+	"github.com/kerrrusha/btc-api/api/internal/utils"
 )
 
 func SendEmails(to []string, subject string, body string) {
@@ -35,7 +34,7 @@ func SendEmails(to []string, subject string, body string) {
 		"Subject: " + subject + "\r\n\r\n" +
 		body + "\r\n")
 	err := smtp.SendMail(ADDRESS, auth, FROM, to, msg)
-	errorUtils.CheckForError(err)
+	utils.CheckForError(err)
 
 	log.Println("Emails was sent successfully via SMTP '" + HOST + "' host.")
 }
@@ -45,19 +44,19 @@ func SendRateEmails(w http.ResponseWriter, r *http.Request) {
 
 	provider, requestFailure := service.GetProviderRepository().GetCurrencyProvider()
 	if requestFailure != nil {
-		responseUtils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
+		utils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
 		return
 	}
 
-	cfg := config.Get()
-	rate, err := provider.GetCurrencyRate(cfg.BaseCurrency, cfg.QuoteCurrency)
+	cfg := config.GetConfig()
+	rate, err := provider.GetCurrencyRate(cfg.GetBaseCurrency(), cfg.GetQuoteCurrency())
 
 	if err != nil {
-		responseUtils.SendResponse(w, model.ErrorResponse{Error: err.GetMessage()}, http.StatusBadRequest)
+		utils.SendResponse(w, model.ErrorResponse{Error: err.GetMessage()}, http.StatusBadRequest)
 		return
 	}
 
-	emails := ReadEmails(cfg.Filepath)
+	emails := ReadEmails(cfg.GetEmailsFilepath())
 
 	subject := "BTC/UAH"
 	body := fmt.Sprintf("%d", rate)
@@ -66,5 +65,5 @@ func SendRateEmails(w http.ResponseWriter, r *http.Request) {
 		SendEmails([]string{element}, subject, body)
 	}
 
-	responseUtils.SendResponse(w, model.SuccessResponse{Success: "Emails was sent successfully!"}, http.StatusOK)
+	utils.SendResponse(w, model.SuccessResponse{Success: "Emails was sent successfully!"}, http.StatusOK)
 }
