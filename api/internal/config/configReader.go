@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"strconv"
 	"sync"
 
 	"github.com/kerrrusha/btc-api/api/internal/model/dataStorage/fileStorage"
@@ -88,4 +89,11 @@ func (c *config) GetEnvironmentVarCoinapiProviderName() string {
 
 func toString(bytes []byte) string {
 	return utils.RemoveRedundantGaps(string(bytes))
+}
+func toInt(bytes []byte) int {
+	number, err := strconv.Atoi(string(bytes))
+	if err != nil {
+		panic(err)
+	}
+	return number
 }

@@ -8,7 +8,6 @@ import (
 
 	"github.com/kerrrusha/btc-api/api/internal/config"
 	"github.com/kerrrusha/btc-api/api/internal/model"
-	"github.com/kerrrusha/btc-api/api/internal/service"
 	"github.com/kerrrusha/btc-api/api/internal/utils"
 )
 
@@ -42,20 +41,13 @@ func SendEmails(to []string, subject string, body string) {
 func SendRateEmails(w http.ResponseWriter, r *http.Request) {
 	log.Println("sendEmails endpoint")
 
-	provider, requestFailure := service.GetProviderRepository().GetCurrencyProvider()
-	if requestFailure != nil {
-		utils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
-		return
-	}
-
-	cfg := config.GetConfig()
-	rate, err := provider.GetCurrencyRate(cfg.GetBaseCurrency(), cfg.GetQuoteCurrency())
-
+	rate, err := tryToGetRate()
 	if err != nil {
 		utils.SendResponse(w, model.ErrorResponse{Error: err.GetMessage()}, http.StatusBadRequest)
 		return
 	}
 
+	cfg := config.GetConfig()
 	emails := ReadEmails(cfg.GetEmailsFilepath())
 
 	subject := "BTC/UAH"

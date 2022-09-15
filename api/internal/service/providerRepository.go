@@ -5,14 +5,14 @@ import (
 	"sync"
 
 	"github.com/kerrrusha/btc-api/api/internal/config"
-	"github.com/kerrrusha/btc-api/api/internal/errors"
+	"github.com/kerrrusha/btc-api/api/internal/customErrors"
 )
 
 type providerRepository struct {
 	current *currencyProviderChain
 }
 
-var lock = &sync.Mutex{}
+var lockRepoCreation = &sync.Mutex{}
 
 var repo *providerRepository
 
@@ -33,8 +33,8 @@ func getMainCurrencyProviderName() string {
 	return providerName
 }
 func TryInitProviderRepositorySingleton() {
-	lock.Lock()
-	defer lock.Unlock()
+	lockRepoCreation.Lock()
+	defer lockRepoCreation.Unlock()
 	if repo != nil {
 		return
 	}
@@ -66,9 +66,9 @@ func initialiseProviderRepository() {
 	}
 }
 
-func (c *providerRepository) GetCurrencyProvider() (*currencyProvider, *errors.CurrencyProviderChainAreOverError) {
+func (c *providerRepository) GetCurrencyProvider() (*currencyProvider, *customErrors.CurrencyProviderChainAreOverError) {
 	if c.current.IsEmpty() {
-		return nil, errors.CreateCurrencyProviderChainAreOverError("Current provider chain is empty.")
+		return nil, customErrors.CreateCurrencyProviderChainAreOverError("Current provider chain is empty.")
 	}
 	return c.current.GetCurrencyProvider(), nil
 }

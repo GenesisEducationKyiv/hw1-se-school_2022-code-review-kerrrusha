@@ -1,4 +1,4 @@
-package errors
+package customErrors
 
 type RequestFailureError struct {
 	*CustomError

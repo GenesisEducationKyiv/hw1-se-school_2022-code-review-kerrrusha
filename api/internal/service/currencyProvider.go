@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/kerrrusha/btc-api/api/internal/config"
-	"github.com/kerrrusha/btc-api/api/internal/errors"
+	"github.com/kerrrusha/btc-api/api/internal/customErrors"
 	"github.com/kerrrusha/btc-api/api/internal/model"
 	"github.com/kerrrusha/btc-api/api/internal/utils"
 )
@@ -23,12 +23,18 @@ func CreateCurrencyProvider(providerUrl string, currencyRateKey string) *currenc
 	}
 }
 
-func (provider *currencyProvider) GetCurrencyRate(baseCurrency string, quoteCurrency string) (int, *errors.RequestFailureError) {
+func (provider *currencyProvider) RequestJson(baseCurrency string, quoteCurrency string) []byte {
 	requestUrl := provider.configureUrl(baseCurrency, quoteCurrency)
-	jsonResponse := utils.RequestJson(requestUrl)
+	return utils.RequestJson(requestUrl)
+}
+func (provider *currencyProvider) GetCurrencyRate(baseCurrency string, quoteCurrency string) (int, *customErrors.RequestFailureError) {
+	jsonResponse := provider.RequestJson(baseCurrency, quoteCurrency)
 	rate, err := provider.castResponse(jsonResponse)
 
 	return int(rate), err
+}
+func (provider *currencyProvider) GetDomain() string {
+	return utils.SubstringBetween(provider.baseUrl, "https://", "/")
 }
 
 func (provider *currencyProvider) configureUrl(baseCurrency string, quoteCurrency string) string {
@@ -41,7 +47,7 @@ func (provider *currencyProvider) configureUrl(baseCurrency string, quoteCurrenc
 	return result
 }
 
-func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *errors.RequestFailureError) {
+func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *customErrors.RequestFailureError) {
 	const INVALID_RETURN_VALUE = -1
 	const CAST_ERROR_MESSAGE = "Unsuccessful to unmarshal json Response"
 	const STRING_TO_FLOAT_ERROR_MESSAGE = "Unsuccessful parsing string to float64"
@@ -49,22 +55,22 @@ func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *erro
 
 	rateStr, unmarshalErr := utils.GetJsonStringValueByKey(jsonBytes, provider.rateKey)
 	if unmarshalErr != nil {
-		return INVALID_RETURN_VALUE, errors.CreateRequestFailureError(CAST_ERROR_MESSAGE)
+		return INVALID_RETURN_VALUE, customErrors.CreateRequestFailureError(CAST_ERROR_MESSAGE)
 	}
 
 	rate, ParseFloatErr := strconv.ParseFloat(rateStr, 64)
 	if ParseFloatErr != nil {
-		return INVALID_RETURN_VALUE, errors.CreateRequestFailureError(STRING_TO_FLOAT_ERROR_MESSAGE)
+		return INVALID_RETURN_VALUE, customErrors.CreateRequestFailureError(STRING_TO_FLOAT_ERROR_MESSAGE)
 	}
 
 	var errorResponse model.ErrorResponse
 	err := json.Unmarshal(jsonBytes, &errorResponse)
 	if err != nil {
-		return INVALID_RETURN_VALUE, errors.CreateRequestFailureError(THIRD_PARTY_ERROR_MESSAGE)
+		return INVALID_RETURN_VALUE, customErrors.CreateRequestFailureError(THIRD_PARTY_ERROR_MESSAGE)
 	}
 
 	if len(errorResponse.Error) > 0 {
-		return INVALID_RETURN_VALUE, errors.CreateRequestFailureError(errorResponse.Error)
+		return INVALID_RETURN_VALUE, customErrors.CreateRequestFailureError(errorResponse.Error)
 	}
 
 	return rate, nil
