@@ -8,11 +8,15 @@ import (
 	"github.com/kerrrusha/BTC-API/api/rest"
 )
 
-func handleRequests() {
+func getPort() string {
 	PORT, presented := os.LookupEnv("PORT")
 	if !presented {
 		PORT = "8000"
 	}
+	return PORT
+}
+func handleRequests() {
+	PORT := getPort()
 	log.Println("Started server at " + PORT + " port")
 
 	http.HandleFunc("/rate/", rest.Rate)

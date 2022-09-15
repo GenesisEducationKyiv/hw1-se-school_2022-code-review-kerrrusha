@@ -15,7 +15,7 @@ import (
 func Rate(w http.ResponseWriter, r *http.Request) {
 	log.Println("rate endpoint")
 
-	provider, requestFailure := service.GetCurrencyRepository().GetCurrencyProvider()
+	provider, requestFailure := service.GetProviderRepository().GetCurrencyProvider()
 	if requestFailure != nil {
 		responseUtils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
 		return

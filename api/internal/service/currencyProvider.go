@@ -2,20 +2,25 @@ package service
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 
 	"github.com/kerrrusha/BTC-API/api/internal/config"
 	"github.com/kerrrusha/BTC-API/api/internal/model"
 	"github.com/kerrrusha/BTC-API/api/internal/requestUtils"
+	"github.com/kerrrusha/BTC-API/api/internal/service/currencyResponse"
 )
 
 type currencyProvider struct {
-	baseUrl string
+	baseUrl  string
+	response currencyResponse.CurrencyProviderResponse
 }
 
-func CreateCurrencyProvider(providerUrl string) *currencyProvider {
+func CreateCurrencyProvider(providerUrl string,
+	rateResponse currencyResponse.CurrencyProviderResponse) *currencyProvider {
 	return &currencyProvider{
-		baseUrl: providerUrl,
+		baseUrl:  providerUrl,
+		response: rateResponse,
 	}
 }
 
@@ -42,7 +47,21 @@ func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *mode
 	const CAST_ERROR_MESSAGE = "Unsuccessful to unmarshal json Response"
 	const THIRD_PARTY_ERROR_MESSAGE = "Third-party side API caused error"
 
-	var rateResponse model.RateResponse
+	jsonMap := make(map[string]json.RawMessage)
+	e := json.Unmarshal(jsonBytes, &jsonMap)
+
+	if e == nil {
+		log.Println(jsonMap)
+		log.Println("now values:")
+		for key := range jsonMap {
+			log.Println(string(jsonMap[key]))
+		}
+	} else {
+		panic(e)
+	}
+
+	var rateResponse currencyResponse.BinanceResponse
+	log.Println(rateResponse)
 	err := json.Unmarshal(jsonBytes, &rateResponse)
 	if err != nil {
 		return INVALID_RETURN_VALUE, model.CreateRequestFailureError(CAST_ERROR_MESSAGE)
@@ -58,5 +77,5 @@ func (provider *currencyProvider) castResponse(jsonBytes []byte) (float64, *mode
 		return INVALID_RETURN_VALUE, model.CreateRequestFailureError(errorResponse.Error)
 	}
 
-	return rateResponse.Rate, nil
+	return rateResponse.GetRate(), nil
 }

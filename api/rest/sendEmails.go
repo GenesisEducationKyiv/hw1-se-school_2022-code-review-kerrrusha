@@ -43,7 +43,7 @@ func SendEmails(to []string, subject string, body string) {
 func SendRateEmails(w http.ResponseWriter, r *http.Request) {
 	log.Println("sendEmails endpoint")
 
-	provider, requestFailure := service.GetCurrencyRepository().GetCurrencyProvider()
+	provider, requestFailure := service.GetProviderRepository().GetCurrencyProvider()
 	if requestFailure != nil {
 		responseUtils.SendResponse(w, model.ErrorResponse{Error: requestFailure.GetMessage()}, http.StatusBadRequest)
 		return

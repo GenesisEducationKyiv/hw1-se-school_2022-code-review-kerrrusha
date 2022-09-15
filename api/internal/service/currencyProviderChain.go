@@ -17,6 +17,6 @@ func (c *currencyProviderChain) SetNext(nextChain *currencyProviderChain) {
 	c.next = nextChain
 }
 
-func (c *currencyProviderChain) IsLast() bool {
-	return c.next == nil
+func (c *currencyProviderChain) IsEmpty() bool {
+	return c.provider == nil
 }
