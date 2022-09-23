@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/kerrrusha/btc-api/api/internal/model/dataStorage/fileStorage"
+	"github.com/kerrrusha/btc-api/api/dataAccess/storage/fileStorage"
 	"github.com/kerrrusha/btc-api/api/internal/utils"
 )
 
@@ -85,6 +85,24 @@ func (c *config) GetEnvironmentVarBinanceProviderName() string {
 }
 func (c *config) GetEnvironmentVarCoinapiProviderName() string {
 	return toString(c.data["environmentVarCoinapiProviderName"])
+}
+func (c *config) GetSmtpIdentity() string {
+	return toString(c.data[""])
+}
+func (c *config) GetSmtpUsername() string {
+	return toString(c.data["smtpUsername"])
+}
+func (c *config) GetSmtpPassword() string {
+	return toString(c.data["smtpPassword"])
+}
+func (c *config) GetSmtpFrom() string {
+	return toString(c.data["smtpFrom"])
+}
+func (c *config) GetSmtpHost() string {
+	return toString(c.data["smtpHost"])
+}
+func (c *config) GetSmtpPort() string {
+	return toString(c.data["smtpPort"])
 }
 
 func toString(bytes []byte) string {

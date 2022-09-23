@@ -9,5 +9,11 @@
 	"binanceUrl": "https://api.binance.com/api/v3/ticker/price?symbol={BASE}{QUOTE}",
     "binanceRateKey": "price",
 	"environmentVarBinanceProviderName": "BINANCE",
-	"environmentVarCoinapiProviderName": "COINAPI"
+	"environmentVarCoinapiProviderName": "COINAPI",
+	"smtpIdentity": "",
+	"smtpUsername": "smtp8317@gmail.com",
+	"smtpPassword": "khtihhqqywqrryan",
+	"smtpFrom": "smtp8317@gmail.com",
+	"smtpHost": "smtp.gmail.com",
+	"smtpPort": "587"
 }

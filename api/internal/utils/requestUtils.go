@@ -10,20 +10,28 @@ func RequestJson(url string) []byte {
 	client := http.Client{Timeout: time.Second * 2}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
-	CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 
 	res, err := client.Do(req)
-	CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 
 	if res.Body != nil {
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
-			CheckForError(err)
+			if err != nil {
+				panic(err)
+			}
 		}(res.Body)
 	}
 
 	body, readErr := io.ReadAll(res.Body)
-	CheckForError(readErr)
+	if readErr != nil {
+		panic(readErr)
+	}
 
 	return body
 }

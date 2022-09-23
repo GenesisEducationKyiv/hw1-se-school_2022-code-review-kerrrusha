@@ -13,13 +13,17 @@ func FileNotExist(filepath string) bool {
 
 func FileIsEmpty(filepath string) bool {
 	fileStat, err := os.Stat(filepath)
-	CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 	return fileStat.Size() == 0
 }
 
 func GetGoSrcPath() string {
 	ex, err := os.Getwd()
-	CheckForError(err)
+	if err != nil {
+		panic(err)
+	}
 	return filepath.Dir(ex)
 }
 
