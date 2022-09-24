@@ -1,0 +1,109 @@
+package config
+
+import (
+	"encoding/json"
+	"sync"
+
+	"github.com/kerrrusha/btc-api/api/dataAccess/storage/fileStorage"
+	"github.com/kerrrusha/btc-api/api/internal/utils"
+)
+
+const PROJECT_FOLDER_NAME = "btc-api"
+const CONFIG_FILEPATH = "config.json"
+
+type config struct {
+	data map[string]json.RawMessage
+}
+
+var lock = &sync.Mutex{}
+
+var cfg *config
+
+func GetConfig() *config {
+	if cfg != nil {
+		return cfg
+	}
+
+	TryInitConfigSingleton()
+
+	return cfg
+}
+
+func TryInitConfigSingleton() {
+	lock.Lock()
+	defer lock.Unlock()
+	if cfg == nil {
+		createConfig()
+	}
+}
+
+func createConfig() {
+	path := utils.GetProjPath(PROJECT_FOLDER_NAME) + CONFIG_FILEPATH
+	reader := fileStorage.CreateFileReader(path)
+
+	jsonBytes := reader.Read()
+	jsonMap := make(map[string]json.RawMessage)
+
+	err := json.Unmarshal(jsonBytes, &jsonMap)
+	if err != nil {
+		panic(err)
+	}
+
+	cfg = &config{data: jsonMap}
+}
+
+func (c *config) GetEmailsFilepath() string {
+	return toString(c.data["emailsFilepath"])
+}
+func (c *config) GetBaseCurrency() string {
+	return toString(c.data["baseCurrency"])
+}
+func (c *config) GetBaseCurrencyMark() string {
+	return toString(c.data["baseCurrencyMark"])
+}
+func (c *config) GetQuoteCurrency() string {
+	return toString(c.data["quoteCurrency"])
+}
+func (c *config) GetQuoteCurrencyMark() string {
+	return toString(c.data["quoteCurrencyMark"])
+}
+func (c *config) GetCoinapiUrl() string {
+	return toString(c.data["coinapiUrl"])
+}
+func (c *config) GetCoinapiRateKey() string {
+	return toString(c.data["coinapiRateKey"])
+}
+func (c *config) GetBinanceUrl() string {
+	return toString(c.data["binanceUrl"])
+}
+func (c *config) GetBinanceRateKey() string {
+	return toString(c.data["binanceRateKey"])
+}
+func (c *config) GetEnvironmentVarBinanceProviderName() string {
+	return toString(c.data["environmentVarBinanceProviderName"])
+}
+func (c *config) GetEnvironmentVarCoinapiProviderName() string {
+	return toString(c.data["environmentVarCoinapiProviderName"])
+}
+func (c *config) GetSmtpIdentity() string {
+	return toString(c.data[""])
+}
+func (c *config) GetSmtpUsername() string {
+	return toString(c.data["smtpUsername"])
+}
+func (c *config) GetSmtpPassword() string {
+	return toString(c.data["smtpPassword"])
+}
+func (c *config) GetSmtpFrom() string {
+	return toString(c.data["smtpFrom"])
+}
+func (c *config) GetSmtpHost() string {
+	return toString(c.data["smtpHost"])
+}
+func (c *config) GetSmtpPort() string {
+	return toString(c.data["smtpPort"])
+}
+
+func toString(bytes []byte) string {
+	return utils.RemoveRedundantGaps(string(bytes))
+}

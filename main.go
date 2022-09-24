@@ -1,23 +1,26 @@
 package main
 
 import (
+	routes2 "github.com/kerrrusha/btc-api/api/presentation/routes"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/kerrrusha/BTC-API/service"
 )
 
-func handleRequests() {
+func getPort() string {
 	PORT, presented := os.LookupEnv("PORT")
 	if !presented {
 		PORT = "8000"
 	}
+	return PORT
+}
+func handleRequests() {
+	PORT := getPort()
 	log.Println("Started server at " + PORT + " port")
 
-	http.HandleFunc("/rate/", service.Rate)
-	http.HandleFunc("/subscribe/", service.SubscribeNewEmail)
-	http.HandleFunc("/sendEmails/", service.SendBTCRateMails)
+	http.HandleFunc("/rate/", routes2.ProvideRate)
+	http.HandleFunc("/subscribe/", routes2.Subscribe)
+	http.HandleFunc("/sendEmails/", routes2.SendRateEmails)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+PORT, nil))
 }
 
