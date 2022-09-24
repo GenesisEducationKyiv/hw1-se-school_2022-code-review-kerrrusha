@@ -11,8 +11,6 @@ type PresenterSuccess interface {
 }
 
 func CreateJsonSuccessPresenter() PresenterSuccess {
-	var presenter PresenterSuccess
-
-	presenter = presenters.CreateJsonSuccessPresenter()
+	var presenter PresenterSuccess = presenters.CreateJsonSuccessPresenter()
 	return presenter
 }

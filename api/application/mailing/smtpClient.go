@@ -1,10 +1,10 @@
 package mailing
 
 import (
-	"github.com/kerrrusha/btc-api/api/internal/config"
 	"log"
 	"net/smtp"
 
+	"github.com/kerrrusha/btc-api/api/internal/config"
 	"github.com/kerrrusha/btc-api/api/internal/customErrors"
 )
 

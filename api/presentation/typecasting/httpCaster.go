@@ -10,7 +10,7 @@ import (
 
 type HttpCaster struct{}
 
-func (c *HttpCaster) ToEmail(r *http.Request) domain.Email {
+func (c *HttpCaster) RequestToEmail(r *http.Request) domain.Email {
 	decoder := json.NewDecoder(r.Body)
 
 	var email domain.Email
@@ -20,4 +20,8 @@ func (c *HttpCaster) ToEmail(r *http.Request) domain.Email {
 	}
 
 	return email
+}
+
+func CreateHttpCaster() *HttpCaster {
+	return &HttpCaster{}
 }

@@ -12,8 +12,6 @@ type PresenterRate interface {
 }
 
 func CreateJsonRatePresenter() PresenterRate {
-	var presenter PresenterRate
-
-	presenter = presenters.CreateJsonRatePresenter()
+	var presenter PresenterRate = presenters.CreateJsonRatePresenter()
 	return presenter
 }

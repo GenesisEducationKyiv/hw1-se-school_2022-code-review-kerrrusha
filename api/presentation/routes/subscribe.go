@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/kerrrusha/btc-api/api/presentation/typecasting"
 	"log"
 	"net/http"
 
@@ -11,5 +12,6 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	log.Println("subscribe endpoint")
 
 	s := service.SubscribeService{}
-	s.SubscribeEmail(w, r)
+	newEmail := typecasting.CreateHttpCaster().RequestToEmail(r)
+	s.SubscribeEmail(w, newEmail)
 }

@@ -15,8 +15,7 @@ func (e *FatalErrorHandler) handleFatalError(w http.ResponseWriter, err *customE
 		return
 	}
 
-	var errPresenter application.PresenterError
-	errPresenter = application.CreateJsonErrorPresenter()
+	var errPresenter application.PresenterError = application.CreateJsonErrorPresenter()
 	errPresenter.PresentError(w, err.GetMessage(), statusCode)
 	log.Fatal(err.GetMessage())
 }

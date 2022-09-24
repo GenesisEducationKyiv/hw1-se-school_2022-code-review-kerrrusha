@@ -10,13 +10,11 @@ import (
 type ResponseSender struct{}
 
 func (e *FatalErrorHandler) sendSuccessResponse(w http.ResponseWriter, message string) {
-	var errPresenter application.PresenterSuccess
-	errPresenter = application.CreateJsonSuccessPresenter()
-	errPresenter.PresentSuccess(w, message)
+	var presenter = application.CreateJsonSuccessPresenter()
+	presenter.PresentSuccess(w, message)
 }
 
 func (e *FatalErrorHandler) sendErrorResponse(w http.ResponseWriter, err *customErrors.CustomError, statusCode int) {
-	var errPresenter application.PresenterError
-	errPresenter = application.CreateJsonErrorPresenter()
-	errPresenter.PresentError(w, err.GetMessage(), statusCode)
+	var presenter = application.CreateJsonErrorPresenter()
+	presenter.PresentError(w, err.GetMessage(), statusCode)
 }

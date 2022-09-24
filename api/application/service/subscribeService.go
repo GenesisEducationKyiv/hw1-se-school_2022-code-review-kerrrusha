@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/kerrrusha/btc-api/api/presentation/typecasting"
 	"net/http"
 
 	"github.com/kerrrusha/btc-api/api/application"
@@ -16,11 +15,7 @@ type SubscribeService struct {
 	*ResponseSender
 }
 
-func (s *SubscribeService) SubscribeEmail(w http.ResponseWriter, r *http.Request) {
-	var email domain.Email
-	caster := typecasting.HttpCaster{}
-	email = caster.ToEmail(r)
-
+func (s *SubscribeService) SubscribeEmail(w http.ResponseWriter, email domain.Email) {
 	emails, err := s.GetSubscribedEmails()
 	s.handleFatalError(w, err, http.StatusBadRequest)
 

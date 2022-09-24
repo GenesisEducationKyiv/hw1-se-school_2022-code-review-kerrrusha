@@ -1,10 +1,10 @@
 package service
 
 import (
-	"github.com/kerrrusha/btc-api/api/domain"
 	"net/http"
 
 	"github.com/kerrrusha/btc-api/api/application"
+	"github.com/kerrrusha/btc-api/api/domain"
 	"github.com/kerrrusha/btc-api/api/internal/config"
 	"github.com/kerrrusha/btc-api/api/internal/customErrors"
 )
@@ -19,8 +19,7 @@ func (r *RateService) ProvideRateJson(w http.ResponseWriter) {
 		r.handleFatalError(w, err, http.StatusBadRequest)
 	}
 
-	var ratePresenter application.PresenterRate
-	ratePresenter = application.CreateJsonRatePresenter()
+	var ratePresenter = application.CreateJsonRatePresenter()
 	ratePresenter.PresentRate(w, rate)
 }
 

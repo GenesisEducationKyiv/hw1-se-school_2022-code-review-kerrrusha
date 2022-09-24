@@ -11,8 +11,5 @@ type PresenterError interface {
 }
 
 func CreateJsonErrorPresenter() PresenterError {
-	var presenter PresenterError
-
-	presenter = presenters.CreateJsonErrorPresenter()
-	return presenter
+	return presenters.CreateJsonErrorPresenter()
 }
