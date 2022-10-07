@@ -43,6 +43,9 @@ func main() {
 		false,
 		nil,
 	)
+	if err != nil {
+		panic(err)
+	}
 	forever := make(chan bool)
 	go func() {
 		for d := range msgs {
