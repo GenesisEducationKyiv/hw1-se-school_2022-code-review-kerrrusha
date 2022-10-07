@@ -2,7 +2,7 @@ package typecasting
 
 import (
 	"encoding/json"
-	"log"
+	"github.com/kerrrusha/btc-api/logger"
 	"net/http"
 
 	"github.com/kerrrusha/btc-api/api/domain"
@@ -16,7 +16,8 @@ func (c *HttpCaster) RequestToEmail(r *http.Request) domain.Email {
 	var email domain.Email
 	err := decoder.Decode(&email)
 	if err != nil {
-		log.Fatal(err)
+		log := logger.CreateRabbitMQLogger()
+		log.Error(err.Error())
 	}
 
 	return email

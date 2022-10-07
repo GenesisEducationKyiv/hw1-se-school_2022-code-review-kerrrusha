@@ -1,7 +1,7 @@
 package mailing
 
 import (
-	"log"
+	"github.com/kerrrusha/btc-api/logger"
 	"net/smtp"
 
 	"github.com/kerrrusha/btc-api/api/internal/config"
@@ -32,7 +32,8 @@ func (s *SmtpClient) getMessage(subject string, body string) []byte {
 
 func (s *SmtpClient) authorize() {
 	s.auth = smtp.PlainAuth(s.identity, s.username, s.password, s.host)
-	log.Println("SMTP was authorized successfully.")
+	log := logger.CreateRabbitMQLogger()
+	log.Info("SMTP was authorized successfully.")
 }
 
 func (s *SmtpClient) SendEmails(to []string, subject string, body string) *customErrors.SendMailError {
@@ -44,7 +45,8 @@ func (s *SmtpClient) SendEmails(to []string, subject string, body string) *custo
 	err := smtp.SendMail(s.getAddress(), s.auth, s.from, to, msg)
 	if err != nil {
 		errMsg := "Failed to send emails"
-		log.Println(errMsg + ": " + err.Error())
+		log := logger.CreateRabbitMQLogger()
+		log.Error(errMsg + ": " + err.Error())
 		return customErrors.CreateSendMailError(errMsg)
 	}
 

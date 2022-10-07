@@ -1,10 +1,9 @@
 package currencySource
 
 import (
-	"log"
-
 	"github.com/kerrrusha/btc-api/api/domain"
 	"github.com/kerrrusha/btc-api/api/internal/customErrors"
+	"github.com/kerrrusha/btc-api/logger"
 )
 
 type CurrencyProviderFacade struct {
@@ -46,5 +45,6 @@ func (providerFacade *CurrencyProviderFacade) GetCurrencyRate(baseCurrency strin
 }
 func (providerFacade *CurrencyProviderFacade) logProviderResponse(response []byte) {
 	responseMsg := "Response from " + providerFacade.provider.GetDomain() + ": " + string(response)
-	log.Println(responseMsg)
+	log := logger.CreateRabbitMQLogger()
+	log.Info(responseMsg)
 }

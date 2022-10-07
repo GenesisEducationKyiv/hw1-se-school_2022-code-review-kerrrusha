@@ -1,14 +1,15 @@
 package routes
 
 import (
-	"log"
+	"github.com/kerrrusha/btc-api/logger"
 	"net/http"
 
 	"github.com/kerrrusha/btc-api/api/application/service"
 )
 
 func ProvideRate(w http.ResponseWriter, r *http.Request) {
-	log.Println("rate endpoint")
+	log := logger.CreateRabbitMQLogger()
+	log.Debug("rate endpoint")
 
 	s := &service.RateService{}
 	s.ProvideRateJson(w)

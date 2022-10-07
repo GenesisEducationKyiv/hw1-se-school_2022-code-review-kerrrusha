@@ -1,10 +1,11 @@
 package main
 
 import (
-	routes2 "github.com/kerrrusha/btc-api/api/presentation/routes"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/kerrrusha/btc-api/api/presentation/routes"
+	"github.com/kerrrusha/btc-api/logger"
 )
 
 func getPort() string {
@@ -16,12 +17,13 @@ func getPort() string {
 }
 func handleRequests() {
 	PORT := getPort()
-	log.Println("Started server at " + PORT + " port")
+	log := logger.CreateRabbitMQLogger()
+	log.Info("Started server at " + PORT + " port")
 
-	http.HandleFunc("/rate/", routes2.ProvideRate)
-	http.HandleFunc("/subscribe/", routes2.Subscribe)
-	http.HandleFunc("/sendEmails/", routes2.SendRateEmails)
-	log.Fatal(http.ListenAndServe("0.0.0.0:"+PORT, nil))
+	http.HandleFunc("/rate/", routes.ProvideRate)
+	http.HandleFunc("/subscribe/", routes.Subscribe)
+	http.HandleFunc("/sendEmails/", routes.SendRateEmails)
+	log.Error(http.ListenAndServe("0.0.0.0:"+PORT, nil).Error())
 }
 
 func main() {
